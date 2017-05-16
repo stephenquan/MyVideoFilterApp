@@ -12,7 +12,7 @@ public:
     MyVideoFilterRunnable(MyVideoFilter* parent = nullptr);
 
     QVideoFrame run(QVideoFrame *input, const QVideoSurfaceFormat &surfaceFormat, RunFlags flags) Q_DECL_OVERRIDE;
-    QVideoFrame run(const QImage& image, const QVideoSurfaceFormat &surfaceFormat, RunFlags flags);
+    QVideoFrame run(QVideoFrame *input, const QVideoSurfaceFormat &surfaceFormat, RunFlags flags, QImage& image);
 
 protected:
     MyVideoFilter* m_Filter;

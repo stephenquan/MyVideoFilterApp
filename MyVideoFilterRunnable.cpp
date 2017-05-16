@@ -24,7 +24,13 @@ QVideoFrame MyVideoFilterRunnable::run(QVideoFrame *input, const QVideoSurfaceFo
     if (input->handleType() == QAbstractVideoBuffer::NoHandle)
     {
         QImage img = qt_imageFromVideoFrame(*input);
-        return run(img, surfaceFormat, flags);
+
+        if (img.format() == QImage::Format_ARGB32)
+        {
+            return run(input, surfaceFormat, flags, img);
+        }
+
+        return run(input, surfaceFormat, flags, img.convertToFormat(QImage::Format_ARGB32));
     }
 
     if (input->handleType() == QAbstractVideoBuffer::GLTextureHandle)
@@ -41,16 +47,19 @@ QVideoFrame MyVideoFilterRunnable::run(QVideoFrame *input, const QVideoSurfaceFo
         f->glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureId, 0);
         f->glReadPixels(0, 0, input->width(), input->height(), GL_RGBA, GL_UNSIGNED_BYTE, img.bits());
         f->glBindFramebuffer(GL_FRAMEBUFFER, prevFbo);
-        return run(img, surfaceFormat, flags);
+        return run(input, surfaceFormat, flags, img.convertToFormat(QImage::Format_ARGB32));
     }
 
     qDebug() << Q_FUNC_INFO << "Unsupported handle type " << input->handleType();
     return *input;
 }
 
-QVideoFrame MyVideoFilterRunnable::run(const QImage& image, const QVideoSurfaceFormat &surfaceFormat, RunFlags flags)
+QVideoFrame MyVideoFilterRunnable::run(QVideoFrame* input, const QVideoSurfaceFormat &surfaceFormat, RunFlags flags, QImage& image)
 {
-    QImage argb = image.convertToFormat(QImage::Format_ARGB32);
+    if (image.format() != QImage::Format_ARGB32)
+    {
+        return *input;
+    }
 
     int orientation = m_Filter ? m_Filter->property("orientation").toInt() : 0;
 
@@ -62,12 +71,12 @@ QVideoFrame MyVideoFilterRunnable::run(const QImage& image, const QVideoSurfaceF
 
     // qDebug() << Q_FUNC_INFO << "Orientation: " << orientation << "Flip: " << flip;
 
-    for (int y = 0; y < argb.height() && y < 10; y++)
+    for (int y = 0; y < image.height() && y < 10; y++)
     {
-        auto line = argb.bits() + y * argb.bytesPerLine();
+        auto line = image.bits() + y * image.bytesPerLine();
         auto leftPixel = line;
-        auto rightPixel = line + argb.bytesPerLine() - 4;
-        for (int x = 0; x < argb.width() && x < 10; x++)
+        auto rightPixel = line + image.bytesPerLine() - 4;
+        for (int x = 0; x < image.width() && x < 10; x++)
         {
             leftPixel[0] = 0;
             leftPixel[1] = 255;
@@ -82,5 +91,5 @@ QVideoFrame MyVideoFilterRunnable::run(const QImage& image, const QVideoSurfaceF
         }
     }
 
-    return QVideoFrame(argb);
+    return QVideoFrame(image);
 }
