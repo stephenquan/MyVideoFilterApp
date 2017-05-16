@@ -1,6 +1,8 @@
 This is a sample video filter application.
 
-The applications paints a green square at (0, 0) and a red square at (Width-1, 0). Dependending on the device, you will find the green and red square at interesting places due device specific orientation and flip differences.
+The applications paints a green square at (0, 0) and a red square at (Width-1, 0). Dependending on the device, you will find the green and red square at interesting places due device specific orientation and flip differences. For example, on Windows, typically, the QVideoFrame's (0, 0) is on the bottom left hand corner.
+
+![Screenshot.png](Screenshot.png)
 
 The QML code shows how to use the custom filter, for example:
 
