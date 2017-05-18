@@ -16,6 +16,8 @@ public:
 
 protected:
     MyVideoFilter* m_Filter;
+    int m_Orientation;
+    int m_Flip;
 
 };
 
