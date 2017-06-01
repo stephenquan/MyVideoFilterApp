@@ -65,7 +65,7 @@ QVideoFrame MyVideoFilterRunnable::run(QVideoFrame *input, const QVideoSurfaceFo
     return *input;
 }
 
-QVideoFrame MyVideoFilterRunnable::run(QVideoFrame* input, const QVideoSurfaceFormat &surfaceFormat, RunFlags flags, QImage& image)
+QVideoFrame MyVideoFilterRunnable::run(QVideoFrame* input, const QVideoSurfaceFormat &surfaceFormat, RunFlags flags, QImage image)
 {
     Q_UNUSED(surfaceFormat)
     Q_UNUSED(flags)
