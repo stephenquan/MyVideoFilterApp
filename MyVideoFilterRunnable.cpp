@@ -31,6 +31,17 @@ QVideoFrame MyVideoFilterRunnable::run(QVideoFrame *input, const QVideoSurfaceFo
     m_Flip = surfaceFormat.scanLineDirection() == QVideoSurfaceFormat::BottomToTop;
 #endif
 
+    switch (input->pixelFormat())
+    {
+    case QVideoFrame::Format_BGR24:
+    case QVideoFrame::Format_BGR32:
+        if (input->map(QAbstractVideoBuffer::ReadWrite))
+        {
+            return run(input, surfaceFormat, flags, QImage());
+        }
+        break;
+    }
+
     if (input->handleType() == QAbstractVideoBuffer::NoHandle)
     {
         QImage img = qt_imageFromVideoFrame(*input);
@@ -70,32 +81,35 @@ QVideoFrame MyVideoFilterRunnable::run(QVideoFrame* input, const QVideoSurfaceFo
     Q_UNUSED(surfaceFormat)
     Q_UNUSED(flags)
 
-    if (image.format() != QImage::Format_ARGB32)
-    {
-        return *input;
-    }
+    auto bits = !image.isNull() ? image.bits() : input->bits();
+    int bytesPerLine = !image.isNull() ? image.bytesPerLine() : input->bytesPerLine();
+    auto bytesPerPixel = bytesPerLine / input->width();
+    QVideoFrame::PixelFormat pixelFormat = !image.isNull() ? QVideoFrame::pixelFormatFromImageFormat(image.format()) : input->pixelFormat();
 
     // qDebug() << Q_FUNC_INFO << "Orientation: " << m_Orientation << "Flip: " << m_Flip;
 
-    for (int y = 0; y < image.height() && y < 10; y++)
+    for (int y = 0; y < input->height() && y < 32; y++)
     {
-        auto line = image.bits() + y * image.bytesPerLine();
+        unsigned char* line = bits + y * bytesPerLine;
         auto leftPixel = line;
-        auto rightPixel = line + image.bytesPerLine() - 4;
-        for (int x = 0; x < image.width() && x < 10; x++)
+        auto rightPixel = line + bytesPerLine - bytesPerPixel;
+        for (int x = 0; x < input->width() && x < 32; x++)
         {
             leftPixel[0] = 0;
             leftPixel[1] = 255;
             leftPixel[2] = 0;
-            leftPixel[3] = 0;
-            leftPixel += 4;
+            leftPixel += bytesPerPixel;
             rightPixel[0] = 0;
             rightPixel[1] = 0;
             rightPixel[2] = 255;
-            rightPixel[3] = 0;
-            rightPixel -= 4;
+            rightPixel -= bytesPerPixel;
         }
     }
 
-    return QVideoFrame(image);
+    if (input->isMapped())
+    {
+        input->unmap();
+    }
+
+    return !image.isNull() ? QVideoFrame(image) : *input;
 }
