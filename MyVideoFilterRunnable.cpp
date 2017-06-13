@@ -31,21 +31,31 @@ QVideoFrame MyVideoFilterRunnable::run(QVideoFrame *input, const QVideoSurfaceFo
     m_Flip = surfaceFormat.scanLineDirection() == QVideoSurfaceFormat::BottomToTop;
 #endif
 
+#ifdef Q_OS_ANDROID
     switch (input->pixelFormat())
     {
-    case QVideoFrame::Format_BGR24:
     case QVideoFrame::Format_BGR32:
-        if (input->map(QAbstractVideoBuffer::ReadWrite))
+        if (input->map(QAbstractVideoBuffer::ReadOnly))
         {
-            return run(input, surfaceFormat, flags, QImage());
+            QImage img(input->width(), input->height(), QImage::Format_RGBA8888);
+            memcpy(img.bits(), input->bits(), input->mappedBytes());
+            input->unmap();
+            img = img.mirrored();
+            m_Flip = false;
+            return run(input, surfaceFormat, flags, img);
         }
         break;
+
+    default:
+        break;
     }
+#endif
 
     if (input->handleType() == QAbstractVideoBuffer::NoHandle)
     {
         QImage img = qt_imageFromVideoFrame(*input);
 
+        qDebug() << Q_FUNC_INFO << "NoHandle";
         if (img.format() == QImage::Format_ARGB32)
         {
             return run(input, surfaceFormat, flags, img);
@@ -56,7 +66,8 @@ QVideoFrame MyVideoFilterRunnable::run(QVideoFrame *input, const QVideoSurfaceFo
 
     if (input->handleType() == QAbstractVideoBuffer::GLTextureHandle)
     {
-        QImage img(input->width(), input->height(), QImage::Format_RGBA8888);
+        qDebug() << Q_FUNC_INFO << "OpenGL";
+        QImage img(input->width(), input->height(), QImage::Format_ARGB32);
         GLuint textureId = input->handle().toInt();
         QOpenGLContext* ctx = QOpenGLContext::currentContext();
         QOpenGLFunctions* f = ctx->functions();
@@ -69,7 +80,18 @@ QVideoFrame MyVideoFilterRunnable::run(QVideoFrame *input, const QVideoSurfaceFo
         f->glReadPixels(0, 0, input->width(), input->height(), GL_RGBA, GL_UNSIGNED_BYTE, img.bits());
         f->glBindFramebuffer(GL_FRAMEBUFFER, prevFbo);
         m_Flip = false;
-        return run(input, surfaceFormat, flags, img.convertToFormat(QImage::Format_ARGB32));
+        auto pixel = img.bits();
+        for (int y = 0; y < img.height(); y++)
+        {
+            for (int x = 0; x < img.width(); x++)
+            {
+                auto T = pixel[0];
+                pixel[0] = pixel[2];
+                pixel[2] = T;
+                pixel += 4;
+            }
+        }
+        return run(input, surfaceFormat, flags, img);
     }
 
     qDebug() << Q_FUNC_INFO << "Unsupported handle type " << input->handleType();
@@ -84,7 +106,7 @@ QVideoFrame MyVideoFilterRunnable::run(QVideoFrame* input, const QVideoSurfaceFo
     auto bits = !image.isNull() ? image.bits() : input->bits();
     int bytesPerLine = !image.isNull() ? image.bytesPerLine() : input->bytesPerLine();
     auto bytesPerPixel = bytesPerLine / input->width();
-    QVideoFrame::PixelFormat pixelFormat = !image.isNull() ? QVideoFrame::pixelFormatFromImageFormat(image.format()) : input->pixelFormat();
+    //QVideoFrame::PixelFormat pixelFormat = !image.isNull() ? QVideoFrame::pixelFormatFromImageFormat(image.format()) : input->pixelFormat();
 
     // qDebug() << Q_FUNC_INFO << "Orientation: " << m_Orientation << "Flip: " << m_Flip;
 
@@ -104,11 +126,6 @@ QVideoFrame MyVideoFilterRunnable::run(QVideoFrame* input, const QVideoSurfaceFo
             rightPixel[2] = 255;
             rightPixel -= bytesPerPixel;
         }
-    }
-
-    if (input->isMapped())
-    {
-        input->unmap();
     }
 
     return !image.isNull() ? QVideoFrame(image) : *input;
