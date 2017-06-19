@@ -4,6 +4,7 @@
 #include <QOpenGLContext>
 #include <QOpenGLFunctions>
 #include <QQmlContext>
+#include <QDateTime>
 #include "MyVideoFilter.h"
 
 extern QImage qt_imageFromVideoFrame(const QVideoFrame& f);
@@ -23,32 +24,26 @@ QVideoFrame MyVideoFilterRunnable::run(QVideoFrame *input, const QVideoSurfaceFo
         return *input;
     }
 
+    static qint64 lastDraw = 0;
+
+    if (QDateTime::currentDateTime().currentMSecsSinceEpoch() < lastDraw + 3000)
+    {
+    }
+    else if (QDateTime::currentDateTime().currentMSecsSinceEpoch() < lastDraw + 6000)
+    {
+        return *input;
+    }
+    else
+    {
+        lastDraw = QDateTime::currentDateTime().currentMSecsSinceEpoch();
+    }
+
     m_Orientation = m_Filter ? m_Filter->property("orientation").toInt() : 0;
 
 #ifdef Q_OS_ANDROID
     m_Flip = true;
 #else
     m_Flip = surfaceFormat.scanLineDirection() == QVideoSurfaceFormat::BottomToTop;
-#endif
-
-#ifdef Q_OS_ANDROID
-    switch (input->pixelFormat())
-    {
-    case QVideoFrame::Format_BGR32:
-        if (input->map(QAbstractVideoBuffer::ReadOnly))
-        {
-            QImage img(input->width(), input->height(), QImage::Format_RGBA8888);
-            memcpy(img.bits(), input->bits(), input->mappedBytes());
-            input->unmap();
-            img = img.mirrored();
-            m_Flip = false;
-            return run(input, surfaceFormat, flags, img);
-        }
-        break;
-
-    default:
-        break;
-    }
 #endif
 
     if (input->handleType() == QAbstractVideoBuffer::NoHandle)
