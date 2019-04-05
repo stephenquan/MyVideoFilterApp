@@ -12,7 +12,11 @@ public:
     MyVideoFilterRunnable(MyVideoFilter* parent = nullptr);
 
     QVideoFrame run(QVideoFrame *input, const QVideoSurfaceFormat &surfaceFormat, RunFlags flags) Q_DECL_OVERRIDE;
-    QVideoFrame run(QVideoFrame *input, const QVideoSurfaceFormat &surfaceFormat, RunFlags flags, QImage image);
+
+    static QImage QVideoFrameToQImage(QVideoFrame* input);
+    static QImage QVideoFrameToQImage_using_Qt_internals(QVideoFrame* input);
+    static QImage QVideoFrameToQImage_using_GLTextureHandle(QVideoFrame* input);
+    static void drawRedGreenPixels(QImage& image);
 
 protected:
     MyVideoFilter* m_Filter;
