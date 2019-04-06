@@ -84,17 +84,17 @@ QImage MyVideoFilterRunnable::QVideoFrameToQImage_using_Qt_internals(QVideoFrame
 QImage MyVideoFilterRunnable::QVideoFrameToQImage_using_GLTextureHandle(QVideoFrame* input)
 {
     QImage image(input->width(), input->height(), QImage::Format_ARGB32);
-    GLuint textureId = input->handle().toInt();
+    GLuint textureId = static_cast<GLuint>(input->handle().toInt());
     QOpenGLContext* ctx = QOpenGLContext::currentContext();
     QOpenGLFunctions* f = ctx->functions();
     GLuint fbo;
     f->glGenFramebuffers(1, &fbo);
-    GLuint prevFbo;
-    f->glGetIntegerv(GL_FRAMEBUFFER_BINDING, (GLint *) &prevFbo);
+    GLint prevFbo;
+    f->glGetIntegerv(GL_FRAMEBUFFER_BINDING, &prevFbo);
     f->glBindFramebuffer(GL_FRAMEBUFFER, fbo);
     f->glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureId, 0);
     f->glReadPixels(0, 0, input->width(), input->height(), GL_RGBA, GL_UNSIGNED_BYTE, image.bits());
-    f->glBindFramebuffer(GL_FRAMEBUFFER, prevFbo);
+    f->glBindFramebuffer(GL_FRAMEBUFFER, static_cast<GLuint>(prevFbo));
     return image;
 }
 
