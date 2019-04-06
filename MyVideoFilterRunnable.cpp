@@ -18,6 +18,8 @@ MyVideoFilterRunnable::MyVideoFilterRunnable(MyVideoFilter* parent) :
 
 QVideoFrame MyVideoFilterRunnable::run(QVideoFrame *input, const QVideoSurfaceFormat &surfaceFormat, RunFlags flags)
 {
+    Q_UNUSED(flags)
+
     if (!input->isValid())
     {
         qWarning("Invalid input format");
@@ -71,6 +73,13 @@ QImage MyVideoFilterRunnable::QVideoFrameToQImage(QVideoFrame* input)
 
     case QAbstractVideoBuffer::GLTextureHandle:
         return QVideoFrameToQImage_using_GLTextureHandle(input);
+
+    case QAbstractVideoBuffer::XvShmImageHandle:
+    case QAbstractVideoBuffer::CoreImageHandle:
+    case QAbstractVideoBuffer::QPixmapHandle:
+    case QAbstractVideoBuffer::EGLImageHandle:
+    case QAbstractVideoBuffer::UserHandle:
+        break;
     }
 
     return QImage();
