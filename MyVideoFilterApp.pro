@@ -2,11 +2,11 @@ QT += qml quick multimedia
 
 CONFIG += c++11
 
-SOURCES += main.cpp \
-    MyVideoFilter.cpp \
-    MyVideoFilterRunnable.cpp
-
-RESOURCES += qml.qrc
+SOURCES += $$files( "*.cpp" )
+HEADERS += $$files( "*.h" )
+RESOURCES += $$files( "*.qrc" )
+OTHER_FILES += $$files( "*.md" )
+OTHER_FILES += $$files( "*.png" )
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
@@ -29,7 +29,3 @@ DEFINES += QT_DEPRECATED_WARNINGS
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
-
-HEADERS += \
-    MyVideoFilter.h \
-    MyVideoFilterRunnable.h

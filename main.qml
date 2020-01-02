@@ -15,18 +15,39 @@ ApplicationWindow {
 
     VideoOutput {
         id: videoOutput
-
         anchors.fill: parent
-
         autoOrientation: true
         source: camera
-        filters: [ videoFilter ]
+        filters: [ showCornersVideoFilter ]
+        // filters: [ nullVideoFilter ]
+        // filters: [ greyScaleVideoFilter ]
+        // filters: [ blueToRedVideoFilter ]
+        // filters: [ editCenterVideoFilter ]
+        // filters: [ greyScaleVideoFilter, showCornersVideoFilter ]
     }
 
-    MyVideoFilter {
-        id: videoFilter
+    ShowCornersVideoFilter {
+        id: showCornersVideoFilter
+    }
 
-        orientation: videoOutput.orientation
+    NullVideoFilter {
+        id: nullVideoFilter
+    }
+
+    GreyScaleVideoFilter {
+        id: greyScaleVideoFilter
+    }
+
+    BlueToRedVideoFilter {
+        id: blueToRedVideoFilter
+    }
+
+    EditCenterVideoFilter {
+        id: editCenterVideoFilter
+
+        angle: 90
+        // invert: true
+        // mirror: true
     }
 
 }
