@@ -1,6 +1,6 @@
 This is a sample video filter application.
 
-This applications paints a red square into the top left at ( 0, 0 ) and a green square into the top right at ( Width, 0 ).
+This applications paints a red square into the top left at ( 0, 0 ) and green squares in the other 3 corners.
 
 ![Screenshot.png](Screenshot.png)
 
@@ -54,8 +54,6 @@ Edit `main.qml` to try all the other video filters.
 ## ShowCornersVideoFilter
 
 This is the default video filter for this application.
-It shows a red square in the left corner at ( 0, 0 ).
-It shows a green square in the right corner at ( Width, 0 ).
 
 ## BlueToRedVideoFilter
 

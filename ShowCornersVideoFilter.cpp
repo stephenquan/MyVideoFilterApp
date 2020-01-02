@@ -23,6 +23,8 @@ void ShowCornersVideoFilterRunnable::paintCorners( QImage* image )
     QPainter painter( image );
     painter.fillRect( 0, 0, 32, 32, QColor( Qt::GlobalColor::red ) );
     painter.fillRect( image->width() - 32, 0, 32, 32, QColor( Qt::GlobalColor::green ) );
+    painter.fillRect( 0, image->height() - 32, 32, 32, QColor( Qt::GlobalColor::green ) );
+    painter.fillRect( image->width() - 32, image->height() - 32, 32, 32, QColor( Qt::GlobalColor::green ) );
 }
 
 ShowCornersVideoFilter::ShowCornersVideoFilter( QObject* parent )
