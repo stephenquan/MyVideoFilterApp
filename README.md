@@ -1,10 +1,10 @@
 This is a sample video filter application.
 
-This applications paints a red square into the top left at ( 0, 0 ) and a green square at ( Width, 0 ).
+This applications paints a red square into the top left at ( 0, 0 ) and a green square into the top right at ( Width, 0 ).
 
 ![Screenshot.png](Screenshot.png)
 
-The QML code shows how to use the custom filter, for example:
+The QML code shows how to use custom video filters, for example:
 
 ```qml
     Camera {
@@ -21,7 +21,7 @@ The QML code shows how to use the custom filter, for example:
     }
 ```
 
-The C++ code shows how to implement QAbstractVideoFilter, for example:
+The C++ code shows how to implement custom video filters by subclassing QAbstractVideoFilter, for example:
 
 ```c++
     class ShowCornersVideoFilter: public QAbstractVideoFilterRunnable
