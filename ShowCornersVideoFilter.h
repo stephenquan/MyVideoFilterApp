@@ -9,7 +9,6 @@ class ShowCornersVideoFilterRunnable : public QVideoFilterRunnable
 public:
     ShowCornersVideoFilterRunnable();
     QVideoFrame run( QVideoFrame *input, const QVideoSurfaceFormat &surfaceFormat, RunFlags flags ) Q_DECL_OVERRIDE;
-    void paintCorners( QImage* image );
 };
 
 class ShowCornersVideoFilter : public QAbstractVideoFilter

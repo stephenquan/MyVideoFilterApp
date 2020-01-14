@@ -11,7 +11,8 @@ VideoFrame::VideoFrame( QObject* parent ) :
     QObject( parent ),
     m_Input( nullptr ),
     m_MappedImage( nullptr ),
-    m_MapMode( QAbstractVideoBuffer::MapMode::NotMapped )
+    m_MapMode( QAbstractVideoBuffer::MapMode::NotMapped ),
+    m_BottomToTop( false )
 {
 }
 
@@ -21,7 +22,8 @@ VideoFrame::VideoFrame( QVideoFrame* input, QObject* parent ) :
     QObject( parent ),
     m_Input( input ),
     m_MappedImage( nullptr ),
-    m_MapMode( QAbstractVideoBuffer::NotMapped )
+    m_MapMode( QAbstractVideoBuffer::NotMapped ),
+    m_BottomToTop( false )
 {
 }
 
@@ -106,6 +108,20 @@ QImage* VideoFrame::start( QAbstractVideoBuffer::MapMode mode )
 
     m_Image = QVideoFrameToQImage( *m_Input );
     return &m_Image;
+}
+
+//----------------------------------------------------------------------
+
+void VideoFrame::setOptions( QVideoSurfaceFormat* surfaceFormat )
+{
+    m_BottomToTop = false;
+
+    if ( !surfaceFormat )
+    {
+        return;
+    }
+
+    m_BottomToTop = ( surfaceFormat->scanLineDirection() == QVideoSurfaceFormat::Direction::BottomToTop );
 }
 
 //----------------------------------------------------------------------

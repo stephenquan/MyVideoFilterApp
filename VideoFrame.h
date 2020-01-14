@@ -2,6 +2,7 @@
 #define __VideoFrame__
 
 #include <QVideoFrame>
+#include <QVideoSurfaceFormat>
 #include <QImage>
 
 class VideoFrame : public QObject
@@ -16,6 +17,7 @@ public:
     QImage* startReading();
     QImage* startEditing();
     QVideoFrame finish();
+    void setOptions( QVideoSurfaceFormat* surfaceFormat );
 
 protected:
     QVideoFrame* m_Input;
@@ -24,6 +26,8 @@ protected:
     QAbstractVideoBuffer::MapMode m_MapMode;
 
     QImage* start( QAbstractVideoBuffer::MapMode mode );
+
+    bool m_BottomToTop;
 
 };
 

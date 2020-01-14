@@ -3,8 +3,7 @@
 #include <QOpenGLContext>
 #include <QOpenGLFunctions>
 #include <QQmlContext>
-
-QImage qt_imageFromVideoFrame( const QVideoFrame& f );
+#include "private/qvideoframe_p.h"
 
 QImage QVideoFrameToQImage( const QVideoFrame& videoFrame )
 {
@@ -26,7 +25,7 @@ QImage QVideoFrameToQImage( const QVideoFrame& videoFrame )
 
     if ( videoFrame.handleType() == QAbstractVideoBuffer::GLTextureHandle )
     {
-        QImage image( videoFrame.width(),  videoFrame.height(), QImage::Format_ARGB32 );
+        QImage image( videoFrame.width(), videoFrame.height(), QImage::Format_ARGB32 );
         GLuint textureId = static_cast<GLuint>( videoFrame.handle().toInt() );
         QOpenGLContext* ctx = QOpenGLContext::currentContext();
         QOpenGLFunctions* f = ctx->functions();
@@ -38,7 +37,7 @@ QImage QVideoFrameToQImage( const QVideoFrame& videoFrame )
         f->glFramebufferTexture2D( GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureId, 0 );
         f->glReadPixels( 0, 0,  videoFrame.width(),  videoFrame.height(), GL_RGBA, GL_UNSIGNED_BYTE, image.bits() );
         f->glBindFramebuffer( GL_FRAMEBUFFER, static_cast<GLuint>( prevFbo ) );
-        return image;
+        return image.rgbSwapped();
     }
 
     return QImage();

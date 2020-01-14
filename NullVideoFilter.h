@@ -11,6 +11,18 @@ public:
     QVideoFrame run( QVideoFrame *input, const QVideoSurfaceFormat &surfaceFormat, RunFlags flags ) Q_DECL_OVERRIDE;
 };
 
+class NullVideoFilterRunnableProxy : public QObject
+{
+    Q_OBJECT
+public:
+    NullVideoFilterRunnableProxy( QObject* parent = nullptr );
+    NullVideoFilterRunnableProxy( NullVideoFilterRunnable* runnable, QObject* parent = nullptr );
+
+protected:
+    NullVideoFilterRunnable* m_Runnable;
+
+};
+
 class NullVideoFilter : public QAbstractVideoFilter
 {
     Q_OBJECT

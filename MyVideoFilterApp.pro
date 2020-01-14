@@ -1,4 +1,4 @@
-QT += qml quick multimedia
+QT += qml quick multimedia multimedia-private svg xml
 
 CONFIG += c++11
 
@@ -7,6 +7,7 @@ HEADERS += $$files( "*.h" )
 RESOURCES += $$files( "*.qrc" )
 OTHER_FILES += $$files( "*.md" )
 OTHER_FILES += $$files( "*.png" )
+
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =

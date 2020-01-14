@@ -1,6 +1,9 @@
 #include "ShowCornersVideoFilter.h"
 #include <QPainter>
+#include <QDebug>
 #include "VideoFrame.h"
+#include "QVideoFrameToQImage.h"
+#include "QImagePainter.h"
 
 ShowCornersVideoFilterRunnable::ShowCornersVideoFilterRunnable()
 {
@@ -8,23 +11,23 @@ ShowCornersVideoFilterRunnable::ShowCornersVideoFilterRunnable()
 
 QVideoFrame ShowCornersVideoFilterRunnable::run( QVideoFrame *input, const QVideoSurfaceFormat &surfaceFormat, RunFlags flags )
 {
-    Q_UNUSED( surfaceFormat )
     Q_UNUSED( flags )
-    if ( !input ) return QVideoFrame();
-    VideoFrame videoFrame( input );
-    QImage* image = videoFrame.startEditing();
-    if ( !image ) return *input;
-    paintCorners( image );
-    return videoFrame.finish();
-}
 
-void ShowCornersVideoFilterRunnable::paintCorners( QImage* image )
-{
-    QPainter painter( image );
-    painter.fillRect( 0, 0, 32, 32, QColor( Qt::GlobalColor::red ) );
-    painter.fillRect( image->width() - 32, 0, 32, 32, QColor( Qt::GlobalColor::green ) );
-    painter.fillRect( 0, image->height() - 32, 32, 32, QColor( Qt::GlobalColor::green ) );
-    painter.fillRect( image->width() - 32, image->height() - 32, 32, 32, QColor( Qt::GlobalColor::green ) );
+    if ( !input )
+    {
+        return QVideoFrame();
+    }
+
+    QImage image = QVideoFrameToQImage( *input );
+
+    QImagePainter painter( &image, input, surfaceFormat );
+    painter.fillRect( 0, 0, 16, 16, QColor( Qt::GlobalColor::red ) );
+    painter.fillRect( image.width() - 16, 0, 16, 16, QColor( Qt::GlobalColor::green ) );
+    painter.fillRect( 0, image.height() - 16, 16, 16, QColor( Qt::GlobalColor::green ) );
+    painter.fillRect( image.width() - 16, image.height() - 16, 16, 16, QColor( Qt::GlobalColor::green ) );
+    painter.drawText( 32, 32, QStringLiteral( "Origin" ) );
+
+    return image;
 }
 
 ShowCornersVideoFilter::ShowCornersVideoFilter( QObject* parent )

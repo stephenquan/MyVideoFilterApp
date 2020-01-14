@@ -11,7 +11,12 @@ QVideoFrame EditCenterVideoFilterRunnable::run( QVideoFrame *input, const QVideo
 {
     Q_UNUSED( surfaceFormat )
     Q_UNUSED( flags )
-    if ( !input ) return QVideoFrame();
+
+    if ( !input )
+    {
+        return QVideoFrame();
+    }
+
     VideoFrame videoFrame( input );
     QImage* image = videoFrame.startEditing();
     ImageTransformer imageTransformer( *image);

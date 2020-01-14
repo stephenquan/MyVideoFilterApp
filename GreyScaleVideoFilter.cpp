@@ -1,5 +1,7 @@
 #include "GreyScaleVideoFilter.h"
 #include "VideoFrame.h"
+#include "QVideoFrameToQImage.h"
+#include "QImageScanLines.h"
 
 GreyScaleVideoFilterRunnable::GreyScaleVideoFilterRunnable()
 {
@@ -7,17 +9,23 @@ GreyScaleVideoFilterRunnable::GreyScaleVideoFilterRunnable()
 
 QVideoFrame GreyScaleVideoFilterRunnable::run( QVideoFrame *input, const QVideoSurfaceFormat &surfaceFormat, RunFlags flags )
 {
-    Q_UNUSED( surfaceFormat )
     Q_UNUSED( flags )
-    if ( !input ) return QVideoFrame();
-    VideoFrame videoFrame( input );
-    QImage* image = videoFrame.startEditing();
-    if ( !image ) return *input;
-    int width = image->width();
-    int height = image->height();
+
+    if ( !input )
+    {
+        return QVideoFrame();
+    }
+
+    QImage image = QVideoFrameToQImage( *input );
+
+    QImageScanLines scanLines( &image, input, surfaceFormat );
+
+    int width = scanLines.width();
+    int height = scanLines.height();
+
     for ( int y = 0; y < height; y++ )
     {
-        uchar* pixel = image->scanLine( y );
+        uchar* pixel = scanLines.scanLine( y );
         for ( int x = 0; x < width; x++ )
         {
             uchar& B = pixel[ 0 ];
@@ -27,7 +35,8 @@ QVideoFrame GreyScaleVideoFilterRunnable::run( QVideoFrame *input, const QVideoS
             pixel += 4;
         }
     }
-    return videoFrame.finish();
+
+    return image;
 }
 
 GreyScaleVideoFilter::GreyScaleVideoFilter( QObject* parent )
