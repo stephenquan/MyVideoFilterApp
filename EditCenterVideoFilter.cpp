@@ -2,6 +2,19 @@
 #include "VideoFrame.h"
 #include "ImageTransformer.h"
 
+EditCenterVideoFilter::EditCenterVideoFilter( QObject* parent )
+    : QAbstractVideoFilter( parent ),
+      m_angle( 0 ),
+      m_invert( false ),
+      m_mirror( false )
+{
+}
+
+QVideoFilterRunnable* EditCenterVideoFilter::createFilterRunnable()
+{
+    return new EditCenterVideoFilterRunnable( this );
+}
+
 EditCenterVideoFilterRunnable::EditCenterVideoFilterRunnable( EditCenterVideoFilter* filter ) :
     m_Filter( filter )
 {
@@ -38,17 +51,4 @@ QVideoFrame EditCenterVideoFilterRunnable::run( QVideoFrame *input, const QVideo
         painter.drawImage( x0, y0, newImage );
     }
     return videoFrame.finish();
-}
-
-EditCenterVideoFilter::EditCenterVideoFilter( QObject* parent )
-    : QAbstractVideoFilter( parent ),
-      m_angle( 0 ),
-      m_invert( false ),
-      m_mirror( false )
-{
-}
-
-QVideoFilterRunnable* EditCenterVideoFilter::createFilterRunnable()
-{
-    return new EditCenterVideoFilterRunnable( this );
 }

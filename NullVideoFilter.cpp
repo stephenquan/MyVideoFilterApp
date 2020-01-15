@@ -22,18 +22,6 @@ QVideoFrame NullVideoFilterRunnable::run(QVideoFrame *input, const QVideoSurface
     return image;
 };
 
-NullVideoFilterRunnableProxy::NullVideoFilterRunnableProxy( QObject* parent ) :
-    QObject( parent ),
-    m_Runnable( nullptr )
-{
-}
-
-NullVideoFilterRunnableProxy::NullVideoFilterRunnableProxy( NullVideoFilterRunnable* runnable, QObject* parent ) :
-    QObject( parent ),
-    m_Runnable( runnable )
-{
-}
-
 NullVideoFilter::NullVideoFilter( QObject* parent )
     : QAbstractVideoFilter( parent )
 {

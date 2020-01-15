@@ -3,6 +3,16 @@
 #include "QVideoFrameToQImage.h"
 #include "QImageScanLines.h"
 
+GreyScaleVideoFilter::GreyScaleVideoFilter( QObject* parent )
+    : QAbstractVideoFilter( parent )
+{
+}
+
+QVideoFilterRunnable* GreyScaleVideoFilter::createFilterRunnable()
+{
+    return new GreyScaleVideoFilterRunnable();
+}
+
 GreyScaleVideoFilterRunnable::GreyScaleVideoFilterRunnable()
 {
 }
@@ -37,14 +47,4 @@ QVideoFrame GreyScaleVideoFilterRunnable::run( QVideoFrame *input, const QVideoS
     }
 
     return image;
-}
-
-GreyScaleVideoFilter::GreyScaleVideoFilter( QObject* parent )
-    : QAbstractVideoFilter( parent )
-{
-}
-
-QVideoFilterRunnable* GreyScaleVideoFilter::createFilterRunnable()
-{
-    return new GreyScaleVideoFilterRunnable();
 }

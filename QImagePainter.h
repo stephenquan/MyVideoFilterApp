@@ -8,7 +8,7 @@
 class QImagePainter : public QPainter
 {
 public:
-    QImagePainter( QImage* image = nullptr, QVideoFrame* videoFrame = nullptr, const QVideoSurfaceFormat& surfaceFormat = QVideoSurfaceFormat() );
+    QImagePainter( QImage* image = nullptr, QVideoFrame* videoFrame = nullptr, const QVideoSurfaceFormat& surfaceFormat = QVideoSurfaceFormat(), int videoOutputOrientation = 0 );
 
 };
 

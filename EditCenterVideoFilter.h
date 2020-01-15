@@ -5,19 +5,6 @@
 #include <QVideoFilterRunnable>
 #include <QPainter>
 
-class EditCenterVideoFilter;
-
-class EditCenterVideoFilterRunnable : public QVideoFilterRunnable
-{
-public:
-    EditCenterVideoFilterRunnable( EditCenterVideoFilter* filter );
-    QVideoFrame run( QVideoFrame *input, const QVideoSurfaceFormat &surfaceFormat, RunFlags flags ) Q_DECL_OVERRIDE;
-
-protected:
-    EditCenterVideoFilter* m_Filter;
-
-};
-
 class EditCenterVideoFilter : public QAbstractVideoFilter
 {
     Q_OBJECT
@@ -33,6 +20,17 @@ public:
     int m_angle;
     bool m_invert;
     bool m_mirror;
+
+};
+
+class EditCenterVideoFilterRunnable : public QVideoFilterRunnable
+{
+public:
+    EditCenterVideoFilterRunnable( EditCenterVideoFilter* filter );
+    QVideoFrame run( QVideoFrame *input, const QVideoSurfaceFormat &surfaceFormat, RunFlags flags ) Q_DECL_OVERRIDE;
+
+protected:
+    EditCenterVideoFilter* m_Filter;
 
 };
 

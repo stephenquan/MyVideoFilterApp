@@ -3,6 +3,16 @@
 #include "QVideoFrameToQImage.h"
 #include "QImageScanLines.h"
 
+BlueToRedVideoFilter::BlueToRedVideoFilter( QObject* parent )
+    : QAbstractVideoFilter( parent )
+{
+}
+
+QVideoFilterRunnable* BlueToRedVideoFilter::createFilterRunnable()
+{
+    return new BlueToRedVideoFilterRunnable();
+}
+
 BlueToRedVideoFilterRunnable::BlueToRedVideoFilterRunnable()
 {
 }
@@ -41,14 +51,4 @@ QVideoFrame BlueToRedVideoFilterRunnable::run( QVideoFrame *input, const QVideoS
     }
 
     return image;
-}
-
-BlueToRedVideoFilter::BlueToRedVideoFilter( QObject* parent )
-    : QAbstractVideoFilter( parent )
-{
-}
-
-QVideoFilterRunnable* BlueToRedVideoFilter::createFilterRunnable()
-{
-    return new BlueToRedVideoFilterRunnable();
 }
