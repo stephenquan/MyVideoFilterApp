@@ -84,6 +84,12 @@ ApplicationWindow {
         }
     }
 
+    Image {
+        id: image
+        width: parent.width / 2
+        height: parent.height / 2
+    }
+
     Menu {
         id: videoFilterMenu
 
@@ -96,7 +102,7 @@ ApplicationWindow {
                 "nullVideoFilter",
                 "greyScaleVideoFilter",
                 "blueToRedVideoFilter",
-                "editCenterVideoFilter"
+                "captureVideoFilter"
             ]
 
             MenuItem {
@@ -112,7 +118,7 @@ ApplicationWindow {
                     case "showCornersVideoFilter": videoOutput.filters = [ showCornersVideoFilter ]; break;
                     case "greyScaleVideoFilter": videoOutput.filters = [ greyScaleVideoFilter ]; break;
                     case "blueToRedVideoFilter": videoOutput.filters = [ blueToRedVideoFilter ]; break;
-                    case "editCenterVideoFilter": videoOutput.filters = [ editCenterVideoFilter ]; break;
+                    case "captureVideoFilter": videoOutput.filters = [ captureVideoFilter ]; break;
                     }
                 }
             }
@@ -141,19 +147,26 @@ ApplicationWindow {
         id: blueToRedVideoFilter
     }
 
-    EditCenterVideoFilter {
-        id: editCenterVideoFilter
+    CaptureVideoFilter {
+        id: captureVideoFilter
 
-        //angle: angleSlider.value
-        angle: 90
-        invert: false // invertCheckBox.checked
-        //mirror: mirrorCheckBox.checked
+        videoOutputOrientation: videoOutput.orientation
+
+        onCaptured: {
+            image.source = imageUrl;
+        }
     }
 
     Timer {
         id: timer
-        running: true
-        onTriggered: editCenterVideoFilter.angle = ( editCenterVideoFilter.angle + 90  ) % 90;
+        //running: true
+        //onTriggered: captureVideoFilter.angle = ( captureVideoFilter.angle + 90  ) % 90;
+        interval: 1000
+        running: videoFilterName === "captureVideoFilter"
+        repeat: true
+        onTriggered: {
+            captureVideoFilter.capture();
+        }
     }
 
     function getCameraDisplayName( cameraId ) {

@@ -8,7 +8,6 @@ RESOURCES += $$files( "*.qrc" )
 OTHER_FILES += $$files( "*.md" )
 OTHER_FILES += $$files( "*.png" )
 
-
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
 
