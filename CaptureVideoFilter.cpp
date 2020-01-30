@@ -8,7 +8,7 @@
 CaptureVideoFilter::CaptureVideoFilter( QObject* parent )
     : QAbstractVideoFilter( parent ),
       m_VideoOutputOrientation( 0 ),
-      m_Capturing( true )
+      m_Capturing( false )
 {
 }
 
@@ -99,4 +99,16 @@ QVideoFrame CaptureVideoFilterRunnable::run( QVideoFrame *input, const QVideoSur
     }
     return videoFrame.finish();
     */
+}
+
+void CaptureVideoFilter::setCapturing( bool capturing )
+{
+    if ( m_Capturing == capturing )
+    {
+        return;
+    }
+
+    m_Capturing = capturing;
+
+    emit capturingChanged();
 }

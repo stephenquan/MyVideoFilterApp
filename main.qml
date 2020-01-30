@@ -82,12 +82,32 @@ ApplicationWindow {
                 onClicked: videoFilterMenu.open()
             }
         }
+
+        Button {
+            anchors.right: parent.right
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.margins: 10
+            visible: videoFilterName === "captureVideoFilter"
+            text: qsTr( "Capture" )
+            font.pointSize: 12
+            onClicked: captureVideoFilter.capture();
+        }
     }
 
     Image {
-        id: image
+        id: capturedImage
+        anchors.centerIn: parent
         width: parent.width / 2
         height: parent.height / 2
+        visible: false
+
+        MouseArea {
+            anchors.fill: parent
+            onClicked: {
+                capturedImage.visible = false;
+            }
+        }
+
     }
 
     Menu {
@@ -153,19 +173,8 @@ ApplicationWindow {
         videoOutputOrientation: videoOutput.orientation
 
         onCaptured: {
-            image.source = imageUrl;
-        }
-    }
-
-    Timer {
-        id: timer
-        //running: true
-        //onTriggered: captureVideoFilter.angle = ( captureVideoFilter.angle + 90  ) % 90;
-        interval: 1000
-        running: videoFilterName === "captureVideoFilter"
-        repeat: true
-        onTriggered: {
-            captureVideoFilter.capture();
+            capturedImage.source = imageUrl;
+            capturedImage.visible = true;
         }
     }
 

@@ -10,10 +10,12 @@ class CaptureVideoFilter : public QAbstractVideoFilter
 {
     Q_OBJECT
 
+    Q_PROPERTY( bool m_Capturing READ capturing NOTIFY capturingChanged )
     Q_PROPERTY( int videoOutputOrientation MEMBER m_VideoOutputOrientation )
 
 signals:
     void captured( const QUrl& imageUrl );
+    void capturingChanged();
 
 public:
     CaptureVideoFilter( QObject* parent = nullptr );
@@ -23,7 +25,7 @@ public:
 
 public:
     bool capturing() const { return m_Capturing; }
-    void setCapturing( bool capturing ) { m_Capturing = capturing; }
+    void setCapturing( bool capturing );
     int videoOutputOrientation() const { return m_VideoOutputOrientation; }
     void emitCaptured( const QUrl& imageUrl );
 
