@@ -1,5 +1,4 @@
 #include "QImageScanLines.h"
-#include <QDebug>
 
 //----------------------------------------------------------------------
 
@@ -38,10 +37,6 @@ void QImageScanLines::setSource( QImage* image, QVideoFrame* videoFrame, const Q
     {
         m_BottomToTop = ( surfaceFormat.scanLineDirection() == QVideoSurfaceFormat::Direction::BottomToTop );
     }
-
-    qDebug() << Q_FUNC_INFO << __LINE__ << m_BottomToTop;
-    qDebug() << Q_FUNC_INFO << __LINE__ << surfaceFormat.scanLineDirection();
-    qDebug() << Q_FUNC_INFO << __LINE__ << videoFrame->handleType();
 }
 
 //----------------------------------------------------------------------
