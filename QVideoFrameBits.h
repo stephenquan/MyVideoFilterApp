@@ -13,8 +13,8 @@ class QVideoFrameBits
 public:
     QVideoFrameBits( QImage* image = nullptr, QVideoFrame* videoFrame = nullptr, const QVideoSurfaceFormat& surfaceFormat = QVideoSurfaceFormat(), int videoOutputOrientation = 0 );
 
-    void setSource( uchar* bits, const QSize& sourceSize, const QPoint& sourceDelta );
-    void setSource( QImage& image );
+    void setSource( uchar* bits, const QSize& sourceSize, const QPoint& sourceDelta, bool topToBottom = true );
+    void setSource( QImage& image, QVideoFrame* videoFrame = nullptr, const QVideoSurfaceFormat& surfaceFormat = QVideoSurfaceFormat() );
 
     const QRect& sourceClipRect() const { return m_SourceClipRect; }
     void setSourceClipRect( const QRect& sourceClipRect );
@@ -35,6 +35,7 @@ public:
 protected:
     uchar* m_SourceBits;
     QSize m_SourceSize;
+    bool m_SourceTopToBottom;
     QPoint m_SourceDelta;
     QRect m_SourceClipRect;
     int m_VideoOutputOrientation;

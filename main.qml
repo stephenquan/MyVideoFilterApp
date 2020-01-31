@@ -94,12 +94,20 @@ ApplicationWindow {
         }
     }
 
+    Rectangle {
+        anchors.fill: parent
+        color: "black"
+        opacity: 0.5
+        visible: capturedImage.visible
+    }
+
     Image {
         id: capturedImage
         anchors.centerIn: parent
-        width: parent.width / 2
-        height: parent.height / 2
+        width: parent.width * 9 / 10
+        height: parent.height * 9 / 10
         visible: false
+        fillMode: Image.PreserveAspectFit
 
         MouseArea {
             anchors.fill: parent

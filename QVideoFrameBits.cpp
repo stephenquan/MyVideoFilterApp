@@ -3,6 +3,7 @@
 
 QVideoFrameBits::QVideoFrameBits( QImage* image, QVideoFrame* videoFrame, const QVideoSurfaceFormat& surfaceFormat, int videoOutputOrientation  ) :
     m_SourceBits( nullptr ),
+    m_SourceTopToBottom( true ),
     m_SourceSize( 0, 0 ),
     m_SourceDelta( QPoint( 4, 0 ) ),
     m_SourceClipRect( 0, 0, 0, 0 ),
@@ -22,20 +23,28 @@ QVideoFrameBits::QVideoFrameBits( QImage* image, QVideoFrame* videoFrame, const 
     setVideoOutputOrientation( videoOutputOrientation );
 }
 
-void QVideoFrameBits::setSource( uchar* bits, const QSize& sourceSize, const QPoint& sourceDelta )
+void QVideoFrameBits::setSource( uchar* bits, const QSize& sourceSize, const QPoint& sourceDelta, bool topToBottom )
 {
     m_SourceBits = bits;
     m_SourceSize = sourceSize;
     m_SourceDelta = sourceDelta;
+    m_SourceTopToBottom = topToBottom;
     update();
 }
 
-void QVideoFrameBits::setSource( QImage& image )
+void QVideoFrameBits::setSource( QImage& image, QVideoFrame* videoFrame, const QVideoSurfaceFormat& surfaceFormat )
 {
+#ifdef Q_OS_ANDROID
+    bool topToBottom = true;
+#else
+    bool topToBottom = ( surfaceFormat.scanLineDirection() == QVideoSurfaceFormat::TopToBottom );
+#endif
+
     setSource(
                 image.bits(),
                 QSize( image.width(), image.height() ),
-                QPoint( image.bytesPerLine() / image.width(), image.bytesPerLine() )
+                QPoint( image.bytesPerLine() / image.width(), image.bytesPerLine() ),
+                topToBottom
                 );
 }
 
@@ -106,6 +115,11 @@ void QVideoFrameBits::getScanLine( int y, uchar* bits )
     if ( !m_TransformBits )
     {
         return;
+    }
+
+    if ( m_SourceTopToBottom )
+    {
+        y = m_SourceSize.height() - 1 - y;
     }
 
     uchar* src = m_TransformBits + y * m_TransformDelta.y();
