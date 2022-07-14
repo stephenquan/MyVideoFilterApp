@@ -1,4 +1,5 @@
-This is a sample video filter application.
+This is a sample QAbstactVideoFilter application based on Qt5.15.
+It is not compatiable with Qt6.
 
 This applications paints a red square into the top left at ( 0, 0 ) and green squares in the other 3 corners.
 
